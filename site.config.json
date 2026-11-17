@@ -1,0 +1,10 @@
+{
+  "name": "La Tavola Lunga",
+  "description": "A family trattoria in Boston’s North End: handmade pasta from Emilia-Romagna to Puglia, a short honest wine list, and Sunday lunch at one long table.",
+  "domain": "next-italian-trattoria.jamstacks.net",
+  "timeZone": "America/New_York",
+  "jamstacks": {
+    "siteId": "",
+    "cdnUrl": "https://cdn.jamstacks.net"
+  }
+}

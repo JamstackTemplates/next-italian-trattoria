@@ -1,0 +1,536 @@
+/* La Tavola Lunga styles: Tailwind CSS v4 plus this template's customizations.
+   Components use Tailwind utility classes; this file holds what utilities can't:
+   1. colour tokens for light/dark   2. the Tailwind theme built from them
+   3. base element styles           4. shared building blocks (.button, .kicker, .woven-rule, ...)
+   5. illustrations and animation   6. stateful pieces styled by data attributes */
+@import 'tailwindcss';
+
+/* `dark:` follows the jamstacks theme toggle (html.dark). Prefer colour tokens instead. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------
+   1. Colour tokens. Change the palette here.
+   Light mode is "Sunday lunch": linen, ink, terracotta, olive and deep wine.
+   Dark mode is "cena a lume di candela": wine-black, walnut, candle-cream and ochre.
+   The button colour stays the deep terracotta in both, dark enough for white text.
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #f5efe3;
+  /* Warm paper for asides, notes and the map frame. */
+  --paper: #fbf7ee;
+  --paper-2: #eee5d3;
+  --text: #2a2420;
+  --muted: #5d5047;
+  --line: rgba(42, 36, 32, .2);
+  --rule: #2a2420;
+  /* Terracotta: links, accents and buttons. */
+  --accent: #a94a28;
+  --button: #a94a28;
+  --button-hover: #8e3c1f;
+  --on-button: #ffffff;
+  /* Olive: vegetarian marks and region tiles. Wine: pairings and pull quotes. Ochre: decoration only. */
+  --olive: #5c6b2f;
+  --wine: #6e1f2c;
+  --ochre: #c8952e;
+  /* Nonna's ink. */
+  --hand: #3d4f7a;
+  --focus: #a94a28;
+
+  /* Illustrations: ink line and watercolour washes. */
+  --ink-line: #3a302a;
+  --ink-fine: rgba(58, 48, 42, .55);
+  --wash-terracotta: rgba(169, 74, 40, .2);
+  --wash-olive: rgba(92, 107, 47, .2);
+  --wash-ochre: rgba(200, 149, 46, .26);
+  --red-wine: #6e1f2c;
+  --candle-light: 0;
+
+  /* Region tiles */
+  --tile: transparent;
+  --tile-visited: rgba(92, 107, 47, .2);
+  --tile-visited-line: rgba(92, 107, 47, .7);
+  --tile-selected: #5c6b2f;
+  --on-tile-selected: #ffffff;
+
+  /* Linen: a fine weave, kept faint so screenshots stay small. */
+  --texture:
+    repeating-linear-gradient(0deg, rgba(110, 85, 50, .035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(110, 85, 50, .03) 0 1px, transparent 1px 4px);
+
+  /* Google Maps embed: lightly warmed to sit on linen. */
+  --map-filter: sepia(.2) saturate(.85);
+
+  --wide: 80rem;
+  --measure: 36rem;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --space-section: clamp(4rem, 9vw, 7.5rem);
+  --header-h: 3.5rem;
+
+  /* --------------------------------------------------------------
+     Jamstacks component fallbacks (inherited by hosted components).
+     Published portal themes may override these on the host element.
+     Never style the component's shadow-root internals directly.
+     -------------------------------------------------------------- */
+  --jamstacks-font-family: var(--font-sans);
+  --jamstacks-font-size: 17px;
+  --jamstacks-color-primary: #a94a28;
+  --jamstacks-color-background: var(--paper);
+  --jamstacks-color-text: var(--text);
+  --jamstacks-color-muted: var(--muted);
+  --jamstacks-color-border: rgba(42, 36, 32, .35);
+  --jamstacks-color-danger: #9b1c1c;
+  --jamstacks-color-success: var(--olive);
+  --jamstacks-border-radius: 2px;
+  --jamstacks-control-height: 48px;
+  --jamstacks-spacing: 14px;
+  /* Component extension supported by the current support-form runtime: fill the page column. */
+  --jamstacks-form-max-width: 100%;
+
+  /* Shared theme toggle (jamstacks package) */
+  --jamstacks-toggle-color: var(--text);
+  --jamstacks-toggle-dark-color: var(--text);
+  --jamstacks-toggle-border: var(--line);
+  --jamstacks-toggle-background: transparent;
+  --jamstacks-toggle-dark-background: transparent;
+
+  color-scheme: light;
+}
+
+/* Explicit choices override the device; the media fallback also works without JavaScript.
+   Keep these two blocks identical. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: dark;
+    --bg: #170f10;
+    --paper: #241a18;
+    --paper-2: #2e2220;
+    --text: #f1e6d4;
+    --muted: #c9b8a2;
+    --line: rgba(241, 230, 212, .18);
+    --rule: #e2b866;
+    --accent: #e8875f;
+    --button: #a94a28;
+    --button-hover: #bf5732;
+    --on-button: #ffffff;
+    --olive: #b4c27a;
+    --wine: #eba3ad;
+    --ochre: #e2b866;
+    --hand: #b9c8ec;
+    --focus: #e2b866;
+
+    --ink-line: #eadcc4;
+    --ink-fine: rgba(234, 220, 196, .5);
+    --wash-terracotta: rgba(232, 135, 95, .2);
+    --wash-olive: rgba(180, 194, 122, .17);
+    --wash-ochre: rgba(226, 184, 102, .2);
+    --red-wine: #8a2236;
+    --candle-light: 1;
+
+    --tile: transparent;
+    --tile-visited: rgba(226, 184, 102, .16);
+    --tile-visited-line: rgba(226, 184, 102, .6);
+    --tile-selected: #e2b866;
+    --on-tile-selected: #170f10;
+
+    --texture: repeating-linear-gradient(93deg, rgba(255, 220, 180, .016) 0 2px, transparent 2px 11px);
+
+    --map-filter: invert(.9) hue-rotate(180deg) sepia(.4) saturate(.6) brightness(.85) contrast(.95);
+
+    /* The hosted form draws white button text, so its primary stays the deep terracotta. */
+    --jamstacks-color-primary: #a94a28;
+    --jamstacks-color-border: rgba(241, 230, 212, .35);
+    --jamstacks-color-danger: #f19a8f;
+  }
+}
+
+:root.dark {
+  color-scheme: dark;
+  --bg: #170f10;
+  --paper: #241a18;
+  --paper-2: #2e2220;
+  --text: #f1e6d4;
+  --muted: #c9b8a2;
+  --line: rgba(241, 230, 212, .18);
+  --rule: #e2b866;
+  --accent: #e8875f;
+  --button: #a94a28;
+  --button-hover: #bf5732;
+  --on-button: #ffffff;
+  --olive: #b4c27a;
+  --wine: #eba3ad;
+  --ochre: #e2b866;
+  --hand: #b9c8ec;
+  --focus: #e2b866;
+
+  --ink-line: #eadcc4;
+  --ink-fine: rgba(234, 220, 196, .5);
+  --wash-terracotta: rgba(232, 135, 95, .2);
+  --wash-olive: rgba(180, 194, 122, .17);
+  --wash-ochre: rgba(226, 184, 102, .2);
+  --red-wine: #8a2236;
+  --candle-light: 1;
+
+  --tile: transparent;
+  --tile-visited: rgba(226, 184, 102, .16);
+  --tile-visited-line: rgba(226, 184, 102, .6);
+  --tile-selected: #e2b866;
+  --on-tile-selected: #170f10;
+
+  --texture: repeating-linear-gradient(93deg, rgba(255, 220, 180, .016) 0 2px, transparent 2px 11px);
+
+  --map-filter: invert(.9) hue-rotate(180deg) sepia(.4) saturate(.6) brightness(.85) contrast(.95);
+
+  /* The hosted form draws white button text, so its primary stays the deep terracotta. */
+  --jamstacks-color-primary: #a94a28;
+  --jamstacks-color-border: rgba(241, 230, 212, .35);
+  --jamstacks-color-danger: #f19a8f;
+}
+
+/* ------------------------------------------------------------------
+   2. Tailwind theme. Only this template's palette exists: Tailwind's default colours
+   are switched off so new UI can't drift into a generic look.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-*: initial;
+  --breakpoint-xs: 25rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+}
+
+@theme static {
+  /* Display: Bodoni Moda, for the masthead, chapters, dish names and descriptions (its optical
+     sizes keep small text sturdy). Sans: Libre Franklin for UI and small capitals. Hand: Nonna. */
+  --font-display: "Bodoni Moda Variable", "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --font-sans: "Libre Franklin Variable", "Libre Franklin", "Franklin Gothic", system-ui, sans-serif;
+  --font-hand: "Homemade Apple", "Segoe Script", cursive;
+}
+
+@theme inline {
+  --color-white: #fff;
+  --color-bg: var(--bg);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-button: var(--button);
+  --color-on-button: var(--on-button);
+  --color-olive: var(--olive);
+  --color-wine: var(--wine);
+  --color-ochre: var(--ochre);
+  --color-hand: var(--hand);
+}
+
+/* The page column. Grids inside it use 12 columns on desktop. */
+@utility wrap {
+  width: min(100% - 2 * var(--gutter), var(--wide));
+  margin-inline: auto;
+}
+/* Prices and times: lining figures that line up. */
+@utility figures {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+/* Small capitals in the sans, for kickers, labels and navigation. */
+@utility caps {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------
+   3. Base elements
+   ------------------------------------------------------------------ */
+@layer base {
+  html { background: var(--bg); scroll-padding-top: calc(var(--header-h) + 1.25rem); }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg);
+    background-image: var(--texture);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { flex: 1; outline: none; }
+  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; line-height: 1.08; text-wrap: balance; font-optical-sizing: auto; }
+  p, li { text-wrap: pretty; }
+  a { color: inherit; }
+  abbr[title] { text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  ::selection { background: var(--ochre); color: #2a2420; }
+  @media (width < 40rem) {
+    body { font-size: 1rem; }
+  }
+}
+
+/* ------------------------------------------------------------------
+   4. Shared building blocks. Reuse these instead of restyling each instance.
+   ------------------------------------------------------------------ */
+@layer components {
+  .skip-link {
+    position: absolute; top: -4rem; left: 1rem; z-index: 200;
+    padding: .6rem 1rem; background: var(--button); color: var(--on-button);
+    font-weight: 600; text-decoration: none;
+  }
+  .skip-link:focus { top: .5rem; }
+
+  /* Square-cornered, like a printed button on a menu card. */
+  .button {
+    display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+    min-height: 3rem; padding: .7rem 1.4rem;
+    border: 1px solid var(--button); background: var(--button); color: var(--on-button);
+    font-family: var(--font-sans); font-size: .82rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    text-align: center; text-decoration: none; cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .button:hover { background: var(--button-hover); border-color: var(--button-hover); }
+  .button-ghost { background: transparent; color: var(--text); border-color: var(--rule); }
+  .button-ghost:hover { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .button-small { min-height: 2.5rem; padding: .45rem .9rem; font-size: .74rem; }
+
+  .text-link {
+    color: var(--accent); font-weight: 600;
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .text-link:hover { text-decoration-color: currentColor; }
+
+  /* A small-caps kicker above a headline: "EMILIA-ROMAGNA", "FROM THE KITCHEN". */
+  .kicker {
+    font-family: var(--font-sans); font-size: .72rem; font-weight: 600; line-height: 1.3;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* Section headlines across the home page. */
+  .headline { font-size: clamp(2.4rem, 5.5vw, 4.4rem); line-height: 1; letter-spacing: -.01em; }
+  .headline em { font-style: italic; color: var(--accent); }
+
+  /* Long-form text set in the serif, as in a magazine feature. */
+  .prose-serif { font-family: var(--font-display); font-size: clamp(1.08rem, 1.5vw, 1.2rem); line-height: 1.62; font-weight: 450; }
+
+  /* A drop cap on the first paragraph of a feature. */
+  .drop-cap::first-letter {
+    float: left; margin: .06em .1em 0 0;
+    font-family: var(--font-display); font-size: 4.4em; line-height: .78; font-weight: 600; font-style: italic;
+    color: var(--accent);
+  }
+
+  /* A hairline rule, and the woven tablecloth edge: two lines and a stitched band between. */
+  .hairline { height: 1px; background: var(--rule); opacity: .55; }
+  .woven-rule {
+    height: 10px;
+    background:
+      linear-gradient(var(--rule), var(--rule)) top / 100% 1px no-repeat,
+      linear-gradient(var(--rule), var(--rule)) bottom / 100% 1px no-repeat,
+      repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px) 0 3px / 100% 1.5px no-repeat,
+      repeating-linear-gradient(90deg, transparent 0 4.5px, var(--ochre) 4.5px 9px) 0 6px / 100% 1.5px no-repeat;
+    opacity: .85;
+  }
+
+  /* Pull quotes in deep wine, with a hairline above. */
+  .pull-quote {
+    font-family: var(--font-display); font-style: italic; font-weight: 500;
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.22; color: var(--wine);
+    border-top: 1px solid var(--wine); padding-top: .9rem;
+  }
+  .pull-quote::before { content: "“"; }
+  .pull-quote::after { content: "”"; }
+
+  /* Nonna's handwritten notes: margins on desktop, inset asides on small screens. */
+  .marginalia {
+    font-family: var(--font-hand); font-size: 1rem; line-height: 1.95; color: var(--hand);
+  }
+  .marginalia-sign { display: block; margin-top: .2rem; font-size: .92rem; text-align: right; }
+
+  /* Diet marks: small boxed capitals. */
+  .diet-mark {
+    display: inline-grid; place-items: center; min-width: 1.6rem; height: 1.3rem; padding: 0 .3rem;
+    border: 1px solid var(--line); font-family: var(--font-sans); font-size: .64rem; font-weight: 700; letter-spacing: .06em;
+    color: var(--muted); cursor: help;
+  }
+  .diet-mark[data-diet="vegetarian"], .diet-mark[data-diet="vegan"] { color: var(--olive); border-color: color-mix(in srgb, var(--olive) 55%, transparent); }
+
+  .badge {
+    font-family: var(--font-sans); font-size: .62rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .finito {
+    font-family: var(--font-display); font-style: italic; font-size: .98rem; color: var(--wine); white-space: nowrap;
+  }
+
+  /* Status line ("Open tonight · kitchen until 10pm"). */
+  .status { display: inline-flex; align-items: center; gap: .6rem; font-weight: 600; }
+  .status-dot { width: .55rem; height: .55rem; border-radius: 999px; flex: none; background: var(--muted); }
+  .status[data-tone="open"] .status-dot { background: var(--olive); box-shadow: 0 0 0 3px color-mix(in srgb, var(--olive) 25%, transparent); }
+  .status[data-tone="soon"] .status-dot { background: var(--ochre); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ochre) 30%, transparent); }
+  .status[data-tone="closed"] .status-dot { background: var(--accent); }
+  .status:not([data-tone]) .status-dot { background: transparent; border: 1px solid var(--muted); }
+
+  /* A magazine figure: a thin ruled frame and a caption. */
+  .figure-frame { border: 1px solid var(--rule); padding: .5rem; background: var(--paper); }
+  .figure-caption { font-family: var(--font-display); font-style: italic; font-size: .95rem; color: var(--muted); }
+}
+
+/* ------------------------------------------------------------------
+   5. Illustrations, page furniture and animation
+   ------------------------------------------------------------------ */
+@layer components {
+  .site-header {
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 3px 0 -2px var(--line);
+  }
+  .masthead-small { font-family: var(--font-display); font-variant-caps: all-small-caps; font-weight: 600; letter-spacing: .08em; }
+  .nav-link {
+    display: inline-block; padding-block: .35rem;
+    font-family: var(--font-sans); font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    text-decoration: none; color: var(--text); border-bottom: 1px solid transparent; white-space: nowrap;
+  }
+  .nav-link:hover, .nav-link[aria-current] { color: var(--accent); border-bottom-color: var(--accent); }
+  @media (width >= 40rem) { .nav-link { font-size: .8rem; letter-spacing: .18em; } }
+
+  /* The masthead on the cover. Bodoni's highest contrast only at this size. */
+  .masthead {
+    font-family: var(--font-display); font-weight: 500; font-optical-sizing: auto;
+    font-size: clamp(2.6rem, 12.1vw, 11rem); line-height: .86; letter-spacing: -.025em;
+  }
+  .masthead em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+  /* Course chapters: the huge italic title breaks across the grid. */
+  .chapter-title {
+    font-family: var(--font-display); font-style: italic; font-weight: 400;
+    font-size: clamp(4.4rem, 15vw, 12.5rem); line-height: .8; letter-spacing: -.03em;
+  }
+  .chapter-numeral { font-family: var(--font-display); font-size: clamp(1.1rem, 2vw, 1.4rem); letter-spacing: .12em; color: var(--accent); }
+
+  /* Illustrations: fine ink lines and watercolour washes, coloured by tokens. */
+  .ink { fill: none; stroke: var(--ink-line); stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
+  .ink-fine { fill: none; stroke: var(--ink-fine); stroke-width: .7; stroke-linecap: round; stroke-linejoin: round; }
+  .wash-terracotta { fill: var(--wash-terracotta); }
+  .wash-olive { fill: var(--wash-olive); }
+  .wash-ochre { fill: var(--wash-ochre); }
+  .art-wine { fill: var(--red-wine); }
+  .art-paper { fill: var(--paper); }
+
+  /* Candlelight flickering over the flame in the dark picture. */
+  .candle-light {
+    opacity: var(--candle-light); mix-blend-mode: screen; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(255, 196, 110, .38), rgba(255, 170, 80, .12) 55%, transparent);
+  }
+
+  /* Pasta plates (components/pasta-plate.tsx). */
+  .plate svg { overflow: visible; }
+
+  /* The region tile map (components/region-map.tsx). */
+  .region-map { container-type: inline-size; }
+  .region-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .3rem; }
+  .region-tile {
+    display: grid; place-items: center; aspect-ratio: 1; min-width: 0; padding: .1rem;
+    border: 1px solid var(--line); background: var(--tile); color: var(--muted);
+    font-family: var(--font-sans); font-size: clamp(.5rem, 2.2cqi, .7rem); font-weight: 600; letter-spacing: .04em; line-height: 1.1;
+    text-align: center; text-transform: uppercase; overflow-wrap: anywhere;
+  }
+  .region-tile[data-visited] { background: var(--tile-visited); border-color: var(--tile-visited-line); color: var(--text); }
+  button.region-tile { cursor: pointer; transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+  button.region-tile:hover { transform: translateY(-1px); border-color: var(--text); }
+  button.region-tile[aria-pressed="true"] { background: var(--tile-selected); border-color: var(--tile-selected); color: var(--on-tile-selected); }
+  .region-tile-code { display: none; }
+  @container (width < 20rem) {
+    .region-tile-name { display: none; }
+    .region-tile-code { display: inline; }
+  }
+
+  /* Leaders between a wine and its prices on the list. */
+  .leader { flex: 1; min-width: 1rem; border-bottom: 1px dotted var(--line); transform: translateY(-.3em); }
+
+  .map { position: relative; overflow: hidden; min-height: 22rem; background: var(--paper-2); }
+  .map iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: var(--map-filter); }
+
+  .faq summary { list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: var(--accent); transition: transform .2s ease; }
+  .faq[open] summary::after { transform: rotate(45deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The candlelight flickers after dark. */
+  .candle-light { animation: flicker 3.4s ease-in-out infinite; }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    27% { transform: scale(.94, 1.03); filter: brightness(.85); }
+    52% { transform: scale(1.04, .98); filter: brightness(1.12); }
+    78% { transform: scale(.97, 1.02); filter: brightness(.92); }
+  }
+
+  /* Pasta plates draw in once as they scroll into view (components/plate-observer.tsx). */
+  html[data-draw-ready] .plate:not([data-drawn]) .plate-line { stroke-dashoffset: 1; opacity: 0; }
+  html[data-draw-ready] .plate:not([data-drawn]) .plate-wash { opacity: 0; }
+  html[data-draw-ready] .plate .plate-line { stroke-dasharray: 1 1.5; transition: stroke-dashoffset 1.8s cubic-bezier(.4, 0, .2, 1), opacity .15s linear; }
+  html[data-draw-ready] .plate .plate-wash { transition: opacity 1.2s ease .6s; }
+
+  /* Region tiles fade their shading in. */
+  .region-tile[data-visited] { animation: tile-in .9s ease both; animation-delay: calc(var(--i, 0) * 40ms); }
+  @keyframes tile-in { from { background-color: var(--tile); border-color: var(--line); } }
+
+  [data-dim] { transition: opacity .3s ease; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* ------------------------------------------------------------------
+   6. Stateful pieces styled by data attributes
+   ------------------------------------------------------------------ */
+
+/* The cover picture for the current theme (components/hero-picture.tsx). Unlayered, so these win over
+   utilities; the same conditions as the colour-token blocks, so it also works without JavaScript. */
+.hero-picture-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) .hero-picture-light { display: none; }
+  :root:not(.light) .hero-picture-dark { display: block; }
+}
+:root.dark .hero-picture-light { display: none; }
+:root.dark .hero-picture-dark { display: block; }
+
+/* Region highlighting: entries from other regions fade back (components/region-scope.tsx). */
+[data-dim="true"] { opacity: .28; }
+[data-lit="true"] .entry-name { color: var(--accent); }
+
+/* Diet filters on the menu. The full menu is always in the HTML; filters only hide entries. */
+.menu-scope[data-diet="vegetarian"] [data-filterable]:not([data-veg]),
+.menu-scope[data-diet="vegan"] [data-filterable]:not([data-vegan]) { display: none; }
+.chapter-empty { display: none; }
+.menu-scope[data-diet="vegetarian"] .chapter:not(:has([data-entry][data-veg])) .chapter-empty,
+.menu-scope[data-diet="vegan"] .chapter:not(:has([data-entry][data-vegan])) .chapter-empty { display: block; }
+
+/* Hosted Jamstacks support form states (components/jamstacks-support-form.tsx). */
+.enquiry { display: grid; gap: 1rem; }
+.enquiry__host { display: block; min-height: 1px; }
+.enquiry[data-state="loading"] .enquiry__host, .enquiry[data-state="loaded"] .enquiry__host { min-height: 26rem; }
+.enquiry__status:empty { display: none; }
+.enquiry__status { padding: 1rem 1.2rem; border: 1px solid var(--line); background: var(--paper); color: var(--muted); }
+.enquiry[data-state="loading"] .enquiry__status, .enquiry[data-state="loaded"] .enquiry__status { border-style: dashed; }
+
+/* ------------------------------------------------------------------
+   Print: the menu and wine list as a printed card.
+   ------------------------------------------------------------------ */
+@media print {
+  :root { --bg: #fff; --paper: #fff; --text: #000; --muted: #333; --texture: none; }
+  body { background: #fff; color: #000; }
+  .site-header { position: static; box-shadow: none; backdrop-filter: none; }
+  .site-header nav, .site-header button, .map, .print-hidden { display: none !important; }
+  [data-dim] { opacity: 1 !important; }
+  .chapter-title { font-size: 4rem; }
+  a { text-decoration: none; }
+}
